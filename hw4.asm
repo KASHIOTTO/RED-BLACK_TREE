@@ -420,7 +420,7 @@ link_done_right:
 update_root_right:
     # x -> right = y
     sw   $s0, 8($t0)
-    sw   $t0, 16($s0) # y -> parent = x
+    sw   $t0, 16($s0) # y -> parent = x 
 
 exit_right:
     lw   $s0, 0($sp)
