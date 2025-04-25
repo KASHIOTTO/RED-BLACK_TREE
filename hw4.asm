@@ -343,66 +343,81 @@ root_found:
 
 #left_rotate
 left_rotate:
-    addi $sp, $sp, -8
+    addi $sp, $sp, -8 #space on stack
     sw   $ra, 4($sp)
-    sw   $s0,  0($sp)
-    move $s0, $a0          # s0 = x
-    lw   $t0, 8($s0)       # t0 = y = x->right
-    beqz $t0, exit_left    # nothing if x->right == NULL
-    lw   $t1, 4($t0)       # t1 = y->left
-    sw   $t1, 8($s0)
-    beqz $t1, skip_left_child_parent
-    sw   $s0, 16($t1)      # t1->parent = x
-skip_left_child_parent:
-    lw   $t2, 16($s0)      # t2 = old parent of x (G)
-    sw   $t2, 16($t0)      # y->parent = G
-    beqz $t2, skip_link_left
-    lw   $t3, 4($t2)
+    sw   $s0, 0($sp)
+
+    move $s0, $a0 # s0 = x (pivot)
+    lw   $t0, 8($s0) # t0 = y = x -> right
+    beqz $t0, exit_left # no rot if rc NULL
+
+    # x -> right = y -> left
+    lw   $t1, 4($t0) # t1 = y -> left
+    sw   $t1, 8($s0) # assign
+    beqz $t1, skip_parent_left
+    sw   $s0, 16($t1) # y -> left -> parent = x (if exists)
+skip_parent_left:
+    # y -> parent = x -> parent
+    lw   $t2, 16($s0) # t2 = og parent of x
+    sw   $t2, 16($t0) # y -> parent = t2
+
+    # Fix grandparent link
+    beqz $t2, update_root_left # if x was root for update
+    lw   $t3, 4($t2) #G points left or right to x
     beq  $t3, $s0, link_left_left
-    sw   $t0, 8($t2)       # G->right = y
+    sw   $t0, 8($t2) # else G -> right = y
     j    link_done_left
 link_left_left:
-    sw   $t0, 4($t2)       # G->left  = y
+    sw   $t0, 4($t2) # G -> left = y
 link_done_left:
-skip_link_left:
-    sw   $s0, 4($t0)       # y->left  = x
-    sw   $t0, 16($s0)      # x->parent = y
+
+update_root_left:
+    # y -> left = x
+    sw   $s0, 4($t0)
+    sw   $t0, 16($s0) # x -> P = y
 
 exit_left:
-    lw   $s0,  0($sp)
-    lw   $ra,  4($sp)
+    lw   $s0, 0($sp)
+    lw   $ra, 4($sp)
     addi $sp, $sp, 8
     jr   $ra
 #right_rotate
 right_rotate:
-    addi $sp, $sp, -8
+    addi $sp, $sp, -8 #stack
     sw   $ra, 4($sp)
-    sw   $s0,  0($sp)
-    move $s0, $a0          # s0 = y
-    lw   $t0, 4($s0)       # t0 = x = y->left
-    beqz $t0, exit_right   # do nothing, y->left == NULL
-    lw   $t1, 8($t0)       # t1 = x->right
+    sw   $s0, 0($sp)
+
+    move $s0, $a0 # s0 = y
+    lw   $t0, 4($s0) # t0 = x = y -> left
+    beqz $t0, exit_right # no rot if lc NULL
+
+    # y -> left = x -> right
+    lw   $t1, 8($t0) # t1 = x -> right
     sw   $t1, 4($s0)
-    beqz $t1, skip_right_child_parent
-    sw   $s0, 16($t1)      # t1->parent = y
-skip_right_child_parent:
-    lw   $t2, 16($s0)      # t2 = old parent of y (G)
-    sw   $t2, 16($t0)      # x->parent = G
-    beqz $t2, skip_link_right
-    lw   $t3, 8($t2)
+    beqz $t1, skip_parent_right
+    sw   $s0, 16($t1) # x -> right ->  P = y
+skip_parent_right:
+    # x -> P = y -> P
+    lw   $t2, 16($s0) # t2 = G
+    sw   $t2, 16($t0) # x -> P = t2
+
+    # Fix G ptr
+    beqz $t2, update_root_right
+    lw   $t3, 8($t2) # y side
     beq  $t3, $s0, link_right_right
-    sw   $t0, 4($t2)       # G->left  = x
+    sw   $t0, 4($t2) # G -> left = x
     j    link_done_right
 link_right_right:
-    sw   $t0, 8($t2)       # G->right = x
+    sw   $t0, 8($t2) # G -> right = x
 link_done_right:
-skip_link_right:
-    sw   $s0, 8($t0)       # x->right = y
-    sw   $t0, 16($s0)      # y->parent = x
+
+update_root_right:
+    # x -> right = y
+    sw   $s0, 8($t0)
+    sw   $t0, 16($s0) # y -> parent = x
 
 exit_right:
-    lw   $s0,  0($sp)
-    lw   $ra,  4($sp)
+    lw   $s0, 0($sp)
+    lw   $ra, 4($sp)
     addi $sp, $sp, 8
     jr   $ra
-    
