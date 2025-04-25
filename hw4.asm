@@ -377,6 +377,10 @@ update_root_left:
     # y -> left = x
     sw   $s0, 4($t0)
     sw   $t0, 16($s0) # x -> P = y
+    lw $t5, 8($s0)
+    beqz $t5, skip_fix_right_child
+    sw $s0, 16($t5)
+skip_fix_right_child:
 
 exit_left:
     lw   $s0, 0($sp)
@@ -417,6 +421,10 @@ update_root_right:
     # x -> right = y
     sw   $s0, 8($t0)
     sw   $t0, 16($s0) # y -> parent = x
+    lw $t5, 4($s0)
+    beqz $t5, skip_fix_left_child
+    sw $s0, 16($t5)
+skip_fix_left_child:
 
 exit_right:
     lw   $s0, 0($sp)
