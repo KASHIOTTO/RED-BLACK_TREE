@@ -259,7 +259,9 @@ uncle_black_r:
     lw $t2, 16($t0) #update G ptr
     #beqz $t2, fix_continue
 skip_case2_r:
-    #case 3: recolor P and G, rot left on G
+    #case 3: recolor P and G, rot left on G (if G)
+    lw $t2, 16($t0)
+    beqz $t2, fix_continue
     li $t7, 0 
     sw $t7, 12($t0) #P is black
     li $t7, 1 
@@ -298,6 +300,8 @@ uncle_black_l:
     #beqz $t2, fix_continue
 skip_case2_l:
     # Case 3: recolor -> rot right on G
+    lw $t2, 16($t0)
+    beqz $t2, fix_continue
     li   $t7,0
     sw   $t7,12($t0) # P -> black
     li   $t7,1
