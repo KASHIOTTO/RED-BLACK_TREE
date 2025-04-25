@@ -258,17 +258,17 @@ uncle_black_r:
     lw $t0, 16($s0) #update P ptr
     lw $t2, 16($t0) #update G ptr
     #beqz $t2, fix_continue
-skip_case2_r:
-    #case 3: recolor P and G, rot left on G (if G)
-    lw $t2, 16($t0)
-    beqz $t2, fix_continue
-    li $t7, 0 
-    sw $t7, 12($t0) #P is black
-    li $t7, 1 
-    sw $t7, 12($t2) #G is red
-    move $a0, $t2 #rot around G
-    jal left_rotate 
-    j fix_continue #bakc to loop
+skip_case2_r: 
+    lw $t0, 16($s0) #compute parent
+    lw $t2, 16($t0) #compute G
+    li $t7, 0
+    sw $t7, 12($t0) # P is black
+    li $t7, 1
+    sw $t7, 12($t2) # G is red
+    move $a0, $t2 #argument is G
+    jal left_rotate
+    j fix_continue
+
 
 case1_r:
     #case 1: P and U both red -> recolor and check G
@@ -300,15 +300,15 @@ uncle_black_l:
     #beqz $t2, fix_continue
 skip_case2_l:
     # Case 3: recolor -> rot right on G
-    lw $t2, 16($t0)
-    beqz $t2, fix_continue
-    li   $t7,0
-    sw   $t7,12($t0) # P -> black
-    li   $t7,1
-    sw   $t7,12($t2) # G -> red
-    move $a0,$t2 # rot around G
-    jal  right_rotate
-    j    fix_continue
+    lw $t0, 16($s0) #compute parent
+    lw $t2, 16($t0) #compute G
+    li $t7, 0
+    sw $t7, 12($t0) # P is black
+    li $t7, 1
+    sw $t7, 12($t2) # G is red
+    move $a0, $t2 #argument is G
+    jal right_rotate
+    j fix_continue
 
 case1_l:
     # Case 1 mirror: recolor and up
