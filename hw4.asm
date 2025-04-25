@@ -257,6 +257,7 @@ uncle_black_r:
     move $s0, $t0 #N now P after rot
     lw $t0, 16($s0) #update P ptr
     lw $t2, 16($t0) #update G ptr
+    beqz $t2, fix_continue
 skip_case2_r:
     #case 3: recolor P and G, rot left on G
     li $t7, 0 
@@ -294,6 +295,7 @@ uncle_black_l:
     move $s0,$t0 # N <- P
     lw   $t0,16($s0) # refresh P
     lw   $t2,16($t0) # refresh G
+    beqz $t2, fix_continue
 skip_case2_l:
     # Case 3: recolor -> rot right on G
     li   $t7,0
