@@ -257,7 +257,7 @@ uncle_black_r:
     move $s0, $t0 #N now P after rot
     lw $t0, 16($s0) #update P ptr
     lw $t2, 16($t0) #update G ptr
-    beqz $t2, root_case_r
+    #beqz $t2, fix_continue
 skip_case2_r:
     #case 3: recolor P and G, rot left on G
     li $t7, 0 
@@ -267,11 +267,6 @@ skip_case2_r:
     move $a0, $t2 #rot around G
     jal left_rotate 
     j fix_continue #bakc to loop
-root_case_r:
-    li $t7, 0
-    sw $t7, 12($t0)
-    move $s0, $t0
-    j fix_continue
 
 case1_r:
     #case 1: P and U both red -> recolor and check G
@@ -300,7 +295,7 @@ uncle_black_l:
     move $s0,$t0 # N <- P
     lw   $t0,16($s0) # refresh P
     lw   $t2,16($t0) # refresh G
-    beqz $t2, root_case_l
+    #beqz $t2, fix_continue
 skip_case2_l:
     # Case 3: recolor -> rot right on G
     li   $t7,0
@@ -310,11 +305,6 @@ skip_case2_l:
     move $a0,$t2 # rot around G
     jal  right_rotate
     j    fix_continue
-root_case_l:
-    li $t7, 0
-    sw $t7, 12($t0)
-    move $s0, $t0
-    j fix_continue
 
 case1_l:
     # Case 1 mirror: recolor and up
@@ -420,7 +410,7 @@ link_done_right:
 update_root_right:
     # x -> right = y
     sw   $s0, 8($t0)
-    sw   $t0, 16($s0) # y -> parent = x 
+    sw   $t0, 16($s0) # y -> parent = x
 
 exit_right:
     lw   $s0, 0($sp)
