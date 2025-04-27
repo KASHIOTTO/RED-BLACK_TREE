@@ -261,7 +261,7 @@ uncle_black_r:
 skip_case2_r: 
     lw $t0, 16($s0) #compute parent
     lw $t2, 16($t0) #compute G
-    beqz $t2, fix_continue
+    #beqz $t2, fix_continue
     li $t7, 0
     sw $t7, 12($t0) # P is black
     li $t7, 1
@@ -303,7 +303,7 @@ skip_case2_l:
     # Case 3: recolor -> rot right on G
     lw $t0, 16($s0) #compute parent
     lw $t2, 16($t0) #compute G
-    beqz $t2, fix_continue
+    #beqz $t2, fix_continue
     li $t7, 0
     sw $t7, 12($t0) # P is black
     li $t7, 1
