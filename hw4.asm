@@ -261,7 +261,7 @@ uncle_black_r:
 skip_case2_r: 
     lw $t0, 16($s0) #compute parent
     lw $t2, 16($t0) #compute G
-    beqz $t2, fix_continue
+    beqz $t2, no_rotate_r
     li $t7, 0
     sw $t7, 12($t0) # P is black
     li $t7, 1
@@ -269,7 +269,10 @@ skip_case2_r:
     move $a0, $t2 #argument is G
     jal left_rotate
     j fix_continue
-
+no_rotate_r:
+    li $t7, 0
+    sw $t7, 12($t0)
+    j fix_continue
 
 case1_r:
     #case 1: P and U both red -> recolor and check G
@@ -303,13 +306,17 @@ skip_case2_l:
     # Case 3: recolor -> rot right on G
     lw $t0, 16($s0) #compute parent
     lw $t2, 16($t0) #compute G
-    beqz $t2, fix_continue
+    beqz $t2, no_rotate_l
     li $t7, 0
     sw $t7, 12($t0) # P is black
     li $t7, 1
     sw $t7, 12($t2) # G is red
     move $a0, $t2 #argument is G
     jal right_rotate
+    j fix_continue
+no_rotate_l:
+    li $t7, 0
+    sw $t7, 12($t0)
     j fix_continue
 
 case1_l:
